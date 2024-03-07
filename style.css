@@ -1,0 +1,100 @@
+@import url("https://fonts.googleapis.com/css2?family=Madimi+One&display=swap");
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Madimi One", sans-serif;
+  color: white;
+  user-select: none;
+}
+
+:root {
+  --special-characters-BG: rgb(0, 173, 181);
+  --special-characters-BG-hover: rgba(0, 173, 181,.5);
+  --dark-mode-color: #222831;
+  --numbers-back-color: rgba(57, 62, 70);
+  --numbers-back-color-hover: rgba(57, 62, 70,0.5);
+  --equal-back-color: #F9ED69;
+  --equal-back-color-hover:rgba(249, 237, 105,.5) ;
+  --buttons-font-size: 2.5rem;
+  --output-previous-operand: 2rem;
+  --output-current-operand: 3rem;
+  --sperator-border-color:#EEEEEE;
+}
+
+.calculator-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows:minmax(200px,1fr) repeat(4, 1fr);
+  width: 100%;
+  height: 100vh;
+  background-color: var(--dark-mode-color);
+}
+.calculator-output {
+  grid-column: 1/-2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+ 
+}
+.previous-operand {
+  font-size: var(--output-previous-operand);
+}
+.current-operand {
+  font-size: var(--output-current-operand);
+}
+.calculator-history {
+  grid-column: -2 / -1;
+  grid-row: 1 / -1;
+  padding: 1rem;
+  border-left: 5px solid var(--sperator-border-color);
+}
+.calculator-buttons-container {
+  grid-column: 1 / -2;
+  grid-row: 2/-1;
+  gap: 2px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  
+}
+.span-two {
+  grid-row: span 2;
+}
+.calculator-buttons-container > button {
+  outline: none;
+  border: none;
+  font-size: var(--buttons-font-size);
+  cursor: pointer;
+  border-radius: 5px;
+}
+.calculator-buttons-container > button[data-in] {
+  background-color: var(--numbers-back-color);
+  box-shadow: inset 0 0 2px var(--dark-mode-color);
+  transition: 0.2s ease;
+}
+.calculator-buttons-container > button[data-out] {
+  background-color: var(--special-characters-BG);
+  box-shadow: inset 0 0 2px var(--numbers-back-color);
+  transition: 0.2s ease;
+}
+.calculator-buttons-container > button[data-in]:hover {
+  background-color: var(--numbers-back-color-hover);
+  box-shadow: inset 0 0 8px var(--dark-mode-color);
+}
+.calculator-buttons-container > button[data-out]:hover {
+  background-color: var(--special-characters-BG-hover);
+  box-shadow: inset 0 0 8px var(--numbers-back-color);
+}
+.equal-sign {
+  background-color: var(--equal-back-color);
+  box-shadow: inset 0 0 2px var(--dark-mode-color);
+  transition: 0.2s ease;
+}
+.equal-sign:hover {
+  background-color: var(--equal-back-color-hover);
+  box-shadow: inset 0 0 8px var(--dark-mode-color);
+}
