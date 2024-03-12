@@ -9,9 +9,125 @@ const previousOperandElement = document.querySelector(
 );
 const currentOperandElement = document.querySelector("[data-current-operand]");
 const equalButton = document.querySelector("[data-equal]");
+const historyClearbutton = document.querySelector(".clear-history");
+const calculatorHistoryElement = document.querySelector(".calculator-history");
+
 // functions
+function updateHistory() {
+const historyMessage = document.querySelector(".history-message");
+const historyClearbutton = document.querySelector(".clear-history");
+  const cardHistoryArr =
+    JSON.parse(localStorage.getItem("calculateHistory")) ?? [];
+
+  if (cardHistoryArr.length !== 0) {
+    historyMessage.classList.add("d-none");
+    historyClearbutton.classList.remove("d-none")
+    cardHistoryArr.forEach(card=>{
+       calculatorHistoryElement.innerHTML+= card
+    })
+    return
+  } else {
+    historyMessage.classList.remove("d-none");
+    historyClearbutton.classList.add("d-none")
+   
+  }
+}
 
 //classes
+class History {
+  constructor(calculatorHistoryElement) {
+    this.calculatorHistoryElement = calculatorHistoryElement;
+    this.calcHistoryCard = "";
+  }
+  clearAll() {
+    let cards = this.calculatorHistoryElement.querySelectorAll(".history-card");
+    
+    cards.forEach((card) => {
+      card.remove();
+    });
+    localStorage.setItem("calculateHistory","[]")
+    this.showHistoryMessageOrNot()
+
+  }
+  convertTo12Format(hours, minutes) {
+    let hourToNum = parseInt(hours);
+    let minutesToNum = parseInt(minutes);
+    let hourIndentifier = hourToNum >= 12 ? "PM" : "AM";
+
+    let hour12 = hourToNum % 12;
+    hour12 = hour12 ? hour12 : 12;
+
+    const completetime = `${hour12}:${minutesToNum} ${hourIndentifier}`;
+    return completetime;
+  }
+  showHistoryMessageOrNot() {
+    const historyMessage = document.querySelector(".history-message");
+    const historyClearbutton = document.querySelector(".clear-history");
+    const cardHistoryArr =
+    JSON.parse(localStorage.getItem("calculateHistory")) ?? [];
+    if (
+      cardHistoryArr.length !==0
+    ) {
+      historyMessage.classList.add("d-none")
+      historyClearbutton.classList.remove("d-none")
+    }else{
+      historyMessage.classList.remove("d-none")
+      historyClearbutton.classList.add("d-none")
+    }
+  }
+  appendHistory(
+    previousOperand,
+    currentOperand,
+    hours,
+    minutes,
+    operator,
+    result
+  ) {
+    const date = this.convertTo12Format(hours, minutes);
+    this.calcHistoryCard = `   <div class="history-card scale-in">
+    <div class="right-side">
+        <div class="statement">${previousOperand} ${operator} ${currentOperand}</div>
+        <div class="statement-result">${result}</div>
+    </div>
+    <div class="left-side">
+        <div class="history-time-of-commit">${date}</div>
+        <button class="delete-history"><i class="bi bi-trash"></i></button>
+    </div>
+    </div>`;
+
+    if (localStorage.getItem("calculateHistory") === null) {
+      const calculateCardsArr = [];
+      calculateCardsArr.push(this.calcHistoryCard);
+      localStorage.setItem(
+        "calculateHistory",
+        JSON.stringify(calculateCardsArr)
+      );
+    } else {
+      const calculateCardsArrParse = JSON.parse(
+        localStorage.getItem("calculateHistory")
+      );
+      calculateCardsArrParse.push(this.calcHistoryCard);
+      localStorage.setItem(
+        "calculateHistory",
+        JSON.stringify(calculateCardsArrParse)
+      );
+    }
+  }
+  removeAnimation() {
+    let cards = this.calculatorHistoryElement.querySelectorAll(".history-card");
+    cards.forEach((card) => {
+      card.addEventListener("animationend", () => {
+        card.classList.remove("scale-in");
+      });
+    });
+  }
+  updateScreen() {
+    this.calculatorHistoryElement.innerHTML += this.calcHistoryCard;
+    this.removeAnimation();
+    this.showHistoryMessageOrNot()
+  }
+}
+
 class Calculator {
   constructor(previousOperandElement, currentOperandElement) {
     this.currentOperandElement = currentOperandElement;
@@ -123,6 +239,19 @@ class Calculator {
         return;
     }
 
+    const date = new Date();
+    const hours24 = date.getHours();
+    const minutes = date.getMinutes();
+    history.appendHistory(
+      this.previousOperand,
+      this.currentOperand,
+      hours24,
+      minutes,
+      this.operator,
+      computationResult
+    );
+    history.updateScreen();
+
     this.currentOperand = computationResult;
     this.operator = undefined;
     this.previousOperand = "";
@@ -153,6 +282,7 @@ class Calculator {
   }
 }
 let calc = new Calculator(previousOperandElement, currentOperandElement);
+let history = new History(calculatorHistoryElement);
 // add event listeners
 numberButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -184,3 +314,16 @@ percentageButton.addEventListener("click", () => {
   calc.percentage();
   calc.updateScreen();
 });
+
+historyClearbutton.addEventListener("click", () => {
+  history.clearAll();
+});
+
+document.addEventListener("click", (event) => {
+  if (event.target.classList.contains("clear-history")) {
+    history.clearAll();
+    
+  }
+});
+
+window.addEventListener("load", updateHistory);

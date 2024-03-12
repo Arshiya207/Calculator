@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
     <title>Ar calculator</title>
 </head>
 <body>
@@ -15,7 +16,23 @@
                <img src="*" alt=""> 
             </div> -->
         </div>
-        <div class="calculator-history"></div>
+        <div class="calculator-history">
+            <header class="histroy-header">
+                <h3 class="history-title">History</h3>
+                <button class="clear-history d-none" type="button">clear <i class="bi bi-trash"></i></button>
+            </header>
+            <!-- <div class="history-card">
+                <div class="right-side">
+                    <div class="statement">?</div>
+                    <div class="statement-result">?</div>
+                </div>
+                <div class="left-side">
+                    <div class="history-time-of-commit">?</div>
+                    <button class="delete-history"><i class="bi bi-trash"></i></button>
+                </div>
+            </div> -->
+            <p class="history-message d-none">your history is empty</p>
+        </div>
 
         <div class="calculator-buttons-container">
             <button type="button" data-clear-all data-out>CA</button>
