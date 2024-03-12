@@ -84,7 +84,7 @@ class History {
     result
   ) {
     const date = this.convertTo12Format(hours, minutes);
-    this.calcHistoryCard = `   <div class="history-card scale-in">
+    this.calcHistoryCard = `   <div class="history-card ">
     <div class="right-side">
         <div class="statement">${previousOperand} ${operator} ${currentOperand}</div>
         <div class="statement-result">${result}</div>
@@ -112,14 +112,45 @@ class History {
         JSON.stringify(calculateCardsArrParse)
       );
     }
+
+    this.calcHistoryCard = `   <div class="history-card slide-in">
+    <div class="right-side">
+        <div class="statement">${previousOperand} ${operator} ${currentOperand}</div>
+        <div class="statement-result">${result}</div>
+    </div>
+    <div class="left-side">
+        <div class="history-time-of-commit">${date}</div>
+        <button class="delete-history"><i class="bi bi-trash"></i></button>
+    </div>
+    </div>`;
+
   }
   removeAnimation() {
     let cards = this.calculatorHistoryElement.querySelectorAll(".history-card");
     cards.forEach((card) => {
       card.addEventListener("animationend", () => {
-        card.classList.remove("scale-in");
+        card.classList.remove("slide-in");
       });
     });
+  }
+  deleteHistory(cardElement){
+    cardElement.classList.add("slide-out")
+    cardElement.addEventListener("animationend",()=>{
+
+  cardElement.remove()
+    const cardElementsOld=this.calculatorHistoryElement.querySelectorAll(".history-card")
+    const cardElementsNew=[]
+    cardElementsOld.forEach(oldCard=>{
+      let structured=`<div class="history-card">${oldCard.innerHTML} </div>`
+      cardElementsNew.push(structured)
+    })
+    console.log(cardElementsNew)
+    localStorage.setItem("calculateHistory",JSON.stringify(cardElementsNew))
+    this.showHistoryMessageOrNot()
+
+    })
+  
+
   }
   updateScreen() {
     this.calculatorHistoryElement.innerHTML += this.calcHistoryCard;
@@ -299,9 +330,10 @@ deleteButton.addEventListener("click", () => {
   calc.updateScreen();
 });
 operatorButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", (e) => {
     calc.chooseOperation(btn.innerText);
     calc.updateScreen();
+   
   });
 });
 
@@ -325,5 +357,12 @@ document.addEventListener("click", (event) => {
     
   }
 });
+calculatorHistoryElement.addEventListener("click",(e)=>{
+
+    if(e.target.classList.contains("delete-history")){
+        history.deleteHistory(e.target.parentNode.parentNode)
+    }
+
+})
 
 window.addEventListener("load", updateHistory);
