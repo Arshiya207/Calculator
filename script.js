@@ -11,6 +11,9 @@ const currentOperandElement = document.querySelector("[data-current-operand]");
 const equalButton = document.querySelector("[data-equal]");
 const historyClearbutton = document.querySelector(".clear-history");
 const calculatorHistoryElement = document.querySelector(".calculator-history");
+const nightModeButton=document.querySelector(".night-mode-icon-container")
+const htm=document.querySelector("html")
+const darkModeOverlay=document.querySelector(".dark-mode-overlay ")
 
 // functions
 function updateHistory() {
@@ -25,7 +28,7 @@ const historyClearbutton = document.querySelector(".clear-history");
     cardHistoryArr.forEach(card=>{
        calculatorHistoryElement.innerHTML+= card
     })
-    return
+    
   } else {
     historyMessage.classList.remove("d-none");
     historyClearbutton.classList.add("d-none")
@@ -366,3 +369,34 @@ calculatorHistoryElement.addEventListener("click",(e)=>{
 })
 
 window.addEventListener("load", updateHistory);
+nightModeButton.addEventListener("click",()=>{
+  const colorMode=htm.dataset.colorMode
+  const imgColorMode=nightModeButton.querySelector(".night-mode-icon")
+ 
+  if(colorMode==="dark"){
+    imgColorMode.classList.remove("swirl-in") 
+   imgColorMode.classList.add("swirl-out") 
+   imgColorMode.addEventListener("animationend",()=>{
+    imgColorMode.src="icons/sun.png"
+    imgColorMode.classList.remove("swirl-out")
+    imgColorMode.classList.add("swirl-in")
+    darkModeOverlay.classList.add("remove-overlay")
+    htm.dataset.colorMode="light"
+   })
+
+
+
+  }else{
+    imgColorMode.classList.remove("swirl-in") 
+    imgColorMode.classList.add("swirl-out") 
+   imgColorMode.addEventListener("animationend",()=>{
+    imgColorMode.src="icons/night.png"
+    imgColorMode.classList.remove("swirl-out")
+    imgColorMode.classList.add("swirl-in")
+    darkModeOverlay.classList.remove("remove-overlay")
+    htm.dataset.colorMode="dark"
+   })
+  }
+
+
+})
