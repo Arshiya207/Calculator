@@ -11,28 +11,40 @@ const currentOperandElement = document.querySelector("[data-current-operand]");
 const equalButton = document.querySelector("[data-equal]");
 const historyClearbutton = document.querySelector(".clear-history");
 const calculatorHistoryElement = document.querySelector(".calculator-history");
-const nightModeButton=document.querySelector(".night-mode-icon-container")
-const htm=document.querySelector("html")
-const darkModeOverlay=document.querySelector(".dark-mode-overlay ")
-
+const nightModeButton = document.querySelector(".night-mode-icon-container");
+const htm = document.querySelector("html");
+const darkModeOverlay = document.querySelector(".dark-mode-overlay ");
+const imgColorMode = nightModeButton.querySelector(".night-mode-icon");
 // functions
 function updateHistory() {
-const historyMessage = document.querySelector(".history-message");
-const historyClearbutton = document.querySelector(".clear-history");
+  const historyMessage = document.querySelector(".history-message");
+  const historyClearbutton = document.querySelector(".clear-history");
   const cardHistoryArr =
     JSON.parse(localStorage.getItem("calculateHistory")) ?? [];
+  const colorMode = localStorage.getItem("colorMode") ?? "dark";
 
   if (cardHistoryArr.length !== 0) {
     historyMessage.classList.add("d-none");
-    historyClearbutton.classList.remove("d-none")
-    cardHistoryArr.forEach(card=>{
-       calculatorHistoryElement.innerHTML+= card
-    })
-    
+    historyClearbutton.classList.remove("d-none");
+    cardHistoryArr.forEach((card) => {
+      calculatorHistoryElement.innerHTML += card;
+    });
   } else {
     historyMessage.classList.remove("d-none");
-    historyClearbutton.classList.add("d-none")
-   
+    historyClearbutton.classList.add("d-none");
+  }
+  if (colorMode === "dark") {
+    htm.dataset.colorMode = "dark";
+    imgColorMode.src = "icons/night.png";
+  } else {
+    htm.dataset.colorMode = "light";
+    imgColorMode.src = "icons/sun.png";
+    darkModeOverlay.classList.add("d-none");
+    darkModeOverlay.classList.add("remove-overlay");
+
+    setTimeout(() => {
+      darkModeOverlay.classList.remove("d-none");
+    }, 100);
   }
 }
 
@@ -44,13 +56,12 @@ class History {
   }
   clearAll() {
     let cards = this.calculatorHistoryElement.querySelectorAll(".history-card");
-    
+
     cards.forEach((card) => {
       card.remove();
     });
-    localStorage.setItem("calculateHistory","[]")
-    this.showHistoryMessageOrNot()
-
+    localStorage.setItem("calculateHistory", "[]");
+    this.showHistoryMessageOrNot();
   }
   convertTo12Format(hours, minutes) {
     let hourToNum = parseInt(hours);
@@ -67,15 +78,13 @@ class History {
     const historyMessage = document.querySelector(".history-message");
     const historyClearbutton = document.querySelector(".clear-history");
     const cardHistoryArr =
-    JSON.parse(localStorage.getItem("calculateHistory")) ?? [];
-    if (
-      cardHistoryArr.length !==0
-    ) {
-      historyMessage.classList.add("d-none")
-      historyClearbutton.classList.remove("d-none")
-    }else{
-      historyMessage.classList.remove("d-none")
-      historyClearbutton.classList.add("d-none")
+      JSON.parse(localStorage.getItem("calculateHistory")) ?? [];
+    if (cardHistoryArr.length !== 0) {
+      historyMessage.classList.add("d-none");
+      historyClearbutton.classList.remove("d-none");
+    } else {
+      historyMessage.classList.remove("d-none");
+      historyClearbutton.classList.add("d-none");
     }
   }
   appendHistory(
@@ -126,7 +135,6 @@ class History {
         <button class="delete-history"><i class="bi bi-trash"></i></button>
     </div>
     </div>`;
-
   }
   removeAnimation() {
     let cards = this.calculatorHistoryElement.querySelectorAll(".history-card");
@@ -136,29 +144,26 @@ class History {
       });
     });
   }
-  deleteHistory(cardElement){
-    cardElement.classList.add("slide-out")
-    cardElement.addEventListener("animationend",()=>{
-
-  cardElement.remove()
-    const cardElementsOld=this.calculatorHistoryElement.querySelectorAll(".history-card")
-    const cardElementsNew=[]
-    cardElementsOld.forEach(oldCard=>{
-      let structured=`<div class="history-card">${oldCard.innerHTML} </div>`
-      cardElementsNew.push(structured)
-    })
-    console.log(cardElementsNew)
-    localStorage.setItem("calculateHistory",JSON.stringify(cardElementsNew))
-    this.showHistoryMessageOrNot()
-
-    })
-  
-
+  deleteHistory(cardElement) {
+    cardElement.classList.add("slide-out");
+    cardElement.addEventListener("animationend", () => {
+      cardElement.remove();
+      const cardElementsOld =
+        this.calculatorHistoryElement.querySelectorAll(".history-card");
+      const cardElementsNew = [];
+      cardElementsOld.forEach((oldCard) => {
+        let structured = `<div class="history-card">${oldCard.innerHTML} </div>`;
+        cardElementsNew.push(structured);
+      });
+      console.log(cardElementsNew);
+      localStorage.setItem("calculateHistory", JSON.stringify(cardElementsNew));
+      this.showHistoryMessageOrNot();
+    });
   }
   updateScreen() {
     this.calculatorHistoryElement.innerHTML += this.calcHistoryCard;
     this.removeAnimation();
-    this.showHistoryMessageOrNot()
+    this.showHistoryMessageOrNot();
   }
 }
 
@@ -336,7 +341,6 @@ operatorButtons.forEach((btn) => {
   btn.addEventListener("click", (e) => {
     calc.chooseOperation(btn.innerText);
     calc.updateScreen();
-   
   });
 });
 
@@ -357,46 +361,41 @@ historyClearbutton.addEventListener("click", () => {
 document.addEventListener("click", (event) => {
   if (event.target.classList.contains("clear-history")) {
     history.clearAll();
-    
   }
 });
-calculatorHistoryElement.addEventListener("click",(e)=>{
-
-    if(e.target.classList.contains("delete-history")){
-        history.deleteHistory(e.target.parentNode.parentNode)
-    }
-
-})
+calculatorHistoryElement.addEventListener("click", (e) => {
+  if (e.target.classList.contains("delete-history")) {
+    history.deleteHistory(e.target.parentNode.parentNode);
+  }
+});
 
 window.addEventListener("load", updateHistory);
-nightModeButton.addEventListener("click",()=>{
-  const colorMode=htm.dataset.colorMode
-  const imgColorMode=nightModeButton.querySelector(".night-mode-icon")
- 
-  if(colorMode==="dark"){
-    imgColorMode.classList.remove("swirl-in") 
-   imgColorMode.classList.add("swirl-out") 
-   imgColorMode.addEventListener("animationend",()=>{
-    imgColorMode.src="icons/sun.png"
-    imgColorMode.classList.remove("swirl-out")
-    imgColorMode.classList.add("swirl-in")
-    darkModeOverlay.classList.add("remove-overlay")
-    htm.dataset.colorMode="light"
-   })
+nightModeButton.addEventListener("click", () => {
+  const colorMode = htm.dataset.colorMode;
 
+  //const darkMode=localStorage.getItem("colorMode") ?? "dark"
+  if (colorMode === "dark") {
+    imgColorMode.classList.remove("swirl-in");
+    imgColorMode.classList.add("swirl-out");
 
-
-  }else{
-    imgColorMode.classList.remove("swirl-in") 
-    imgColorMode.classList.add("swirl-out") 
-   imgColorMode.addEventListener("animationend",()=>{
-    imgColorMode.src="icons/night.png"
-    imgColorMode.classList.remove("swirl-out")
-    imgColorMode.classList.add("swirl-in")
-    darkModeOverlay.classList.remove("remove-overlay")
-    htm.dataset.colorMode="dark"
-   })
+    imgColorMode.addEventListener("animationend", () => {
+      imgColorMode.src = "icons/sun.png";
+      imgColorMode.classList.remove("swirl-out");
+      imgColorMode.classList.add("swirl-in");
+      darkModeOverlay.classList.add("remove-overlay");
+      htm.dataset.colorMode = "light";
+      localStorage.setItem("colorMode", "light");
+    });
+  } else {
+    imgColorMode.classList.remove("swirl-in");
+    imgColorMode.classList.add("swirl-out");
+    imgColorMode.addEventListener("animationend", () => {
+      imgColorMode.src = "icons/night.png";
+      imgColorMode.classList.remove("swirl-out");
+      imgColorMode.classList.add("swirl-in");
+      darkModeOverlay.classList.remove("remove-overlay");
+      htm.dataset.colorMode = "dark";
+      localStorage.setItem("colorMode", "dark");
+    });
   }
-
-
-})
+});
