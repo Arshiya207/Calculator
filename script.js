@@ -247,14 +247,16 @@ class Calculator {
     let computationResult;
     if (this.currentOperand.toString() === "" || isNaN(this.currentOperand))
       return;
-    if (
-      this.previousOperand / this.currentOperand === Infinity &&
-      Number(this.currentOperand) === 0
-    ) {
-      this.currentOperand = "don't divide by zero";
-      this.operator = undefined;
-      this.previousOperand = "";
-      return;
+    if (this.operator === "÷") {
+      if (
+        this.previousOperand / this.currentOperand === Infinity &&
+        Number(this.currentOperand) === 0
+      ) {
+        this.currentOperand = "don't divide by zero";
+        this.operator = undefined;
+        this.previousOperand = "";
+        return;
+      }
     }
 
     switch (this.operator) {
@@ -282,12 +284,12 @@ class Calculator {
     const hours24 = date.getHours();
     const minutes = date.getMinutes();
     history.appendHistory(
-      this.previousOperand,
-      this.currentOperand,
+      this.displayDigit(this.previousOperand),
+      this.displayDigit(this.currentOperand),
       hours24,
       minutes,
       this.operator,
-      computationResult
+      this.displayDigit(computationResult)
     );
     history.updateScreen();
 

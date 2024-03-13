@@ -47,6 +47,18 @@
   --font-color: white;
   --dark-mode-overlay: #222831;
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--special-characters-BG);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-track {
+  background: none;
+}
 button {
   background: none;
   border: none;
@@ -93,9 +105,11 @@ button {
 }
 .previous-operand {
   font-size: var(--output-previous-operand);
+  user-select: text;
 }
 .current-operand {
   font-size: var(--output-current-operand);
+  user-select: text;
 }
 .calculator-history {
   grid-column: -2 / -1;
@@ -167,6 +181,10 @@ button {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 .history-card {
   display: flex;
@@ -177,6 +195,7 @@ button {
   border-radius: 5px;
   margin-top: 1rem;
 }
+
 .left-side {
   display: flex;
   flex-direction: column;
@@ -194,6 +213,10 @@ button {
   justify-content: space-between;
   align-items: flex-end;
   order: 2;
+  user-select: text !important;
+}
+.right-side * {
+  user-select: text;
 }
 .history-message {
   position: absolute;
@@ -204,9 +227,7 @@ button {
   font-size: var(--history-message-font-size);
   width: 100%;
 }
-::-webkit-scrollbar {
-  width: 0; /* Width of the scrollbar */
-}
+
 .slide-in {
   animation: slide-in-blurred-left 0.2s cubic-bezier(0.23, 1, 0.32, 1) both;
 }
